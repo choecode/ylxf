@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+
+        <el-input type="text" placeholder="请输入账号" v-model="username">
+        </el-input>
+
+        <el-input type="text" placeholder="请输入密码" v-model="password">
+        </el-input>
+
+        <el-button type="primary" @click="doLogin" :loading="loading">获取token</el-button>
+
+        <el-input type="textarea" disabled :rows="2" placeholder="请输入token" v-model="token">
+        </el-input>
+
+        <el-table :data="list" style="width: 100%">
+            <el-table-column prop="TaskTitle" label="积分任务名称">
+            </el-table-column>
+            <el-table-column prop="TaskTypeCode" label="积分任务代号">
+            </el-table-column>
+            <el-table-column prop="TaskDescribe" label="积分任务说明">
+            </el-table-column>
+            <el-table-column prop="tips" label="TIPS">
+                <template slot-scope="{row}">
+                    <span v-if="row.disable">不建议使用，已屏蔽</span>
+                    <span v-else>无</span>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作">
+                <template slot-scope="scope">
+                    <el-button :loading="loading" :disabled="scope.row.disable" size="mini" @click="learn(scope.row)">
+                        获取积分
+                    </el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data() {
+                return {
+                    username: "",
+                    password: "",
+                    token: "",
+                    loading: false,
+                    list: [],
+                }
+            },
+            created() {
+
+            },
+            methods: {
+                
+                doLogin() {
+                    this.loading = true
+                    if (!this.username) {
+                        alert("云岭先锋账号不能为空")
+                        return
+                    }
+
+                    if (!this.password) {
+                        alert("云岭先锋密码不能为空")
+                        return
+                    }
+                    axios.post('/ylxf/login', {
+                        username: this.username,
+                        password: this.password
+                    }).then(response => {
+                        if (response.data.code == 0) {
+                            this.loading = false
+                            this.list = response.data.data.list
+                            this.token = response.data.data.token
+                        } else {
+                            alert(response.data.msg || "出错了")
+                            this.loading = false
+                        }
+                    })
+                        .catch(error => {
+                            this.loading = false
+                            alert("出错了")
+                            console.log(error);
+                        });
+                },
+                learn(row) {
+                    this.loading = true
+                    if (!this.token) {
+                        alert("请先登录")
+                        return
+                    }
+
+                    axios.post('/ylxf/learn', {
+                        token: this.token,
+                        code: row.TaskTypeCode,
+                    })
+                        .then(response => {
+                            alert(response.data.data)
+                            this.loading = false
+                        })
+                        .catch(error => {
+                            this.loading = false
+                            alert("系统出错了")
+                            console.log(error);
+                        });
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
