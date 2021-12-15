@@ -1,5 +1,5 @@
 {
-  "name": "spider8Legg",
+  "name": "ylxf",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -27,8 +27,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-spider8Legg",
-    "stop": "egg-scripts stop --title=egg-server-spider8Legg",
+    "start": "egg-scripts start --daemon --title=egg-server-ylxf",
+    "stop": "egg-scripts stop --title=egg-server-ylxf",
     "dev": "egg-bin dev --trace-warnings --max_old_space_size=9999",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",
